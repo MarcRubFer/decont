@@ -43,14 +43,13 @@ then
         echo "Uncompressing file..."
         echo
 
-        gunzip $2/$file_name
+        gunzip -k $2/$file_name
 
         echo "Done"
         echo "----"
 fi
 
 # Script for filtering by $4
-## NOTE: A new directory ($2/filtered) is created for store filtered sequences; so original sequences are not overwritten.
 
 if [ $# == 4 ]
 then
@@ -58,8 +57,7 @@ then
         echo
 
         filename_uncompress=$(basename $file_name .gz)
-        mkdir -p $2/filtered
-        sed -e "/$4/,+3{d}"  $2/$filename_uncompress > $2/filtered/$filename_uncompress-filter_by_$4
+        seqkit grep -v -r -n -p ".*$4.*" $2/$file_name > $2/$filename_uncompress
 
         echo "Done"
         echo "----"
