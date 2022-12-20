@@ -22,15 +22,25 @@ done
 bash scripts/download.sh https://bioinformatics.cnio.es/data/courses/decont/contaminants.fasta.gz res yes "small nuclear" #TODO-include key to filter as $num
 
 # Index the contaminants file
+echo -e "\nSTAR indexing reference genome"
+echo -e "-------------------------------"
+
 bash scripts/index.sh res/contaminants.fasta res/contaminants_idx
 
+echo -e "\nDone"
+echo -e "-----"
+
 # Merge the samples into a single file
+echo -e "\nMerging replicates..."
 for sid in $(ls data/*.gz | awk -F"/" '{print $2}' | awk -F"-" '{print $1}' | sort -u)
 do
     bash scripts/merge_fastqs.sh data out/merged $sid
 done
+echo -e "\nDone"
+echo -e "------"
 
-# TODO: run cutadapt for all merged files
+# Run cutadapt for all merged files
+echo -e "\nFinding and removing adapter sequences..."
 mkdir -p out/trimmed
 mkdir -p log/cutadapt
 
@@ -41,21 +51,25 @@ do
 	-o out/trimmed/"$sample_id".trimmed.fastq.gz \
        	"$path" > log/cutadapt/"$sample_id".log
 done
+echo -e "\nDone"
+echo -e "-----"
 
 #Run STAR for all trimmed files
+echo -e "\nRunning STAR alignments..."
 for fname in out/trimmed/*.fastq.gz
 do
     sid=$(basename -s .trimmed.fastq.gz "$fname")
-    echo -e "Align "$sid" to index\n"
+    echo -e "\nAligning "$sid" sequences to index reference.\n"
     mkdir -p out/star/$sid
     STAR --runThreadN 4 --genomeDir res/contaminants_idx \
          --outReadsUnmapped Fastx \
 	 --readFilesIn "$fname" \
          --readFilesCommand gunzip -c --outFileNamePrefix out/star/"$sid"/
+    echo -e "\nDone"
+    echo -e "------"
 done 
 
-# TODO: create a log file containing information from cutadapt and star logs
-# (this should be a single log file, and information should be *appended* to it on each run)
-# - cutadapt: Reads with adapters and total basepairs
-# - star: Percentages of uniquely mapped reads, reads mapped to multiple loci, and to too many loci
-# tip: use grep to filter the lines you're interested in
+# Log file containing information from cutadapt and star logs
+
+bash scripts/final_log.sh
+cat log/pipeline.log

@@ -18,7 +18,7 @@ echo "----"
 
 if [ "$3" == "yes" ]
 then
-        echo "Uncompressing file..."
+        echo "Uncompressing file "$file_name" ..."
         echo
 
         gunzip -k "$2"/"$file_name"
@@ -31,7 +31,7 @@ fi
 
 if [ "$#" == 4 ]
 then
-        echo "Filtering sequence by '"$4"'..."
+        echo "Filtering "$file_name" sequence by '"$4"'..."
         echo
 
         file_filtered=$(basename "$file_name" .gz)
