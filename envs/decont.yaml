@@ -1,0 +1,12 @@
+name: decon_env
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - seqkit
+  - cutadapt
+  - star
+  - ca-certificates
+  - openssl
+prefix: /home/vant/mambaforge/envs/decon_env
