@@ -1,15 +1,5 @@
-#Packages to install
-
-#seqkit tools
-#Citation: W Shen, S Le, Y Li*, F Hu*. SeqKit: a cross-platform and ultrafast toolkit for FASTA/Q file manipulation. PLOS ONE. doi:10.1371/journal.pone.0163962. 
-#conda install -c bioconda seqkit
-
-#STAR allignment
-#mamba install star
-
-#Cutadapt
-#mamba install cutadapt
-
+#!/bin/bash
+#Script created by Marcos Rubio Fernández for Advance Linux course in "Master en Bioinformatica aplicada a la Medicina Personalizada y Salud" (2022-23 promotion)
 
 #Download all the files specified in data/filenames
 for url in $(grep "https" $1)

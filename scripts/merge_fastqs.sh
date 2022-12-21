@@ -1,3 +1,6 @@
+#!/bin/bash
+#Script created by Marcos Rubio Fernández for Advance Linux course in "Master en Bioinformatica aplicada a la Medicina Personalizada y Salud" (2022-23 promotion)
+
 # This script should merge all files from a given sample (the sample id is
 # provided in the third argument ($3)) into a single file, which should be
 # stored in the output directory specified by the second argument ($2).

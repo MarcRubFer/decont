@@ -1,3 +1,6 @@
+#!/bin/bash
+#Script created by Marcos Rubio Fernández for Advance Linux course in "Master en Bioinformatica aplicada a la Medicina Personalizada y Salud" (2022-23 promotion)
+
 #This script generate a log file (pipeline.log) which resume some aspects of the alignment.
 
 echo -e "\nPipeline resume - $(date +%F)" > log/pipeline.log
