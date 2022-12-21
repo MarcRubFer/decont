@@ -1,7 +1,6 @@
 #Packages to install
 
 #seqkit tools
-#Citation: W Shen, S Le, Y Li*, F Hu*. SeqKit: a cross-platform and ultrafast toolkit for FASTA/Q file manipulation. PLOS ONE. doi:10.1371/journal.pone.0163962. 
 #conda install -c bioconda seqkit
 
 #STAR allignment
@@ -11,14 +10,26 @@
 #mamba install cutadapt
 
 
-#Download all the files specified in data/filenames
+# Check if file from url is already downloaded. If not, add url to a temp file (## Bonus 2: Check if the output already exists before running a command.)
 for url in $(grep "https" $1)
 do
-    bash scripts/download.sh $url data
+        url_file=$(basename $url)
+        if [[ -e data/$url_file ]];
+        then
+                echo ""$url_file" has been download"
+        else
+                echo $url >> data/urls_to_download.tmp
+        fi
 done
 
-# Download the contaminants fasta file, uncompress it, and
-# filter to remove all small nuclear RNAs
+# Download all files from temp file (## Bonus 1: Replace the loop that downloads the sample data files with a wget one-liner.)
+
+wget -i data/urls_to_download.tmp -P data
+
+# Delete url temp file.
+rm data/urls_to_download.tmp
+
+# Download the contaminants fasta file, uncompress it, and filter to remove all small nuclear RNAs
 bash scripts/download.sh https://bioinformatics.cnio.es/data/courses/decont/contaminants.fasta.gz res yes "small nuclear" #TODO-include key to filter as $num
 
 # Index the contaminants file

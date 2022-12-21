@@ -6,25 +6,36 @@ mkdir -p "$2"
 
 file_name="$(basename "$1")"
 
-echo "Downloading sequence(s)..."
-echo
+if [[ -e "$2"/"$file_name" ]];	#Bonus 2: Check if the output already exists before running a command.
+then
+	echo -e "The file "$file_name" has already been downloaded"
+else
+	echo "Downloading sequence(s)..."
+	echo
 
-wget -O "$2"/"$file_name" "$1"
-
-echo "Done"
-echo "----"
+	wget -O "$2"/"$file_name" "$1"
+	
+	echo "Done"
+	echo "----"
+fi
 
 # Script for optional uncompress ($3 == yes)
+file_uncompress=$(basename -s .gz $file_name)
 
-if [ "$3" == "yes" ]
+if [[ "$3" == "yes" ]];
 then
-        echo "Uncompressing file "$file_name" ..."
-        echo
+	if [[ -e $file_uncompress ]]; #Bonus2: Check if the output already exists before running a command.
+	then
+		echo "File is already uncompress"
+	else
+        	echo "Uncompressing file "$file_name" ..."
+        	echo
 
-        gunzip -k "$2"/"$file_name"
+        	gunzip -k "$2"/"$file_name"
 
-        echo "Done"
-        echo "----"
+        	echo "Done"
+        	echo "----"
+	fi
 fi
 
 # Script for filtering by $4
