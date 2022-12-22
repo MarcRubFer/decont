@@ -39,7 +39,7 @@ then
 fi
 
 # Script for filtering by $4
-
+#TODO Bonus 2: How can I check if the file uncompress has already been filtered???? - In progress.
 if [ "$#" == 4 ]
 then
         echo "Filtering "$file_name" sequence by '"$4"'..."

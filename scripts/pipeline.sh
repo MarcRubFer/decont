@@ -1,16 +1,8 @@
-#Packages to install
+#!/bin/bash
+#Script created by Marcos Rubio Fernández for Advance Linux course in "Master en Bioinformatica aplicada a la Medicina Personalizada y Salud" (2022-23 promotion)
 
-#seqkit tools
-#conda install -c bioconda seqkit
-
-#STAR allignment
-#mamba install star
-
-#Cutadapt
-#mamba install cutadapt
-
-
-# Check if file from url is already downloaded. If not, add url to a temp file (## Bonus 2: Check if the output already exists before running a command.)
+# Check if file from data/urls is already downloaded.
+# If not, add url to a temp file (## Bonus 2: Check if the output already exists before running a command.)
 for url in $(grep "https" $1)
 do
         url_file=$(basename $url)
@@ -19,15 +11,40 @@ do
                 echo ""$url_file" has been download"
         else
                 echo $url >> data/urls_to_download.tmp
+		curl -s $url.md5 | cut -d' ' -f1 >> data/online_md5.tmp #(Bonus 3: md5 check. Extraction of md5 hashes without download md5 file)
         fi
 done
 
 # Download all files from temp file (## Bonus 1: Replace the loop that downloads the sample data files with a wget one-liner.)
 
-wget -i data/urls_to_download.tmp -P data
+if [[ -s data/urls_to_download.tmp ]];
+then
+	wget -i data/urls_to_download.tmp -P data
+fi
 
-# Delete url temp file.
-rm data/urls_to_download.tmp
+# Bonus 3: extraction of md5 hashes of local files.
+
+for file in data/*.gz;
+do
+	md5sum $file | cut -d' ' -f1 >> data/local_md5.tmp
+done
+
+# Compare md5 hashes (online vs local). Exit programm if not coincidence.
+if [[ -e data/online_md5.tmp ]];
+then
+	if diff data/online_md5.tmp data/local_md5.tmp;
+	then
+		echo -e "\n-----------------------------------"
+		echo -e "\nCheck of md5 hashes OK ... continue"
+		echo -e "\n-----------------------------------"
+	else
+		echo "An error in check of md5 hashes. Interrumping program."
+		exit 1
+	fi
+fi
+
+# Delete url temp file(s).
+rm data/*.tmp
 
 # Download the contaminants fasta file, uncompress it, and filter to remove all small nuclear RNAs
 bash scripts/download.sh https://bioinformatics.cnio.es/data/courses/decont/contaminants.fasta.gz res yes "small nuclear" #TODO-include key to filter as $num
