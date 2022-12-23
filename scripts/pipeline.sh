@@ -50,24 +50,38 @@ rm data/*.tmp
 bash scripts/download.sh https://bioinformatics.cnio.es/data/courses/decont/contaminants.fasta.gz res yes "small nuclear" #TODO-include key to filter as $num
 
 # Index the contaminants file
-echo -e "\nSTAR indexing reference genome"
-echo -e "-------------------------------"
+if [[ -d res/contaminants_idx ]] #Bonus2
+then
+	echo -e "Index has already been created...continue"
+	echo -e "-----------------------------------------"
+else
+	echo -e "\nSTAR indexing reference genome"
+	echo -e "-------------------------------"
 
-bash scripts/index.sh res/contaminants.fasta res/contaminants_idx
+	bash scripts/index.sh res/contaminants.fasta res/contaminants_idx
 
-echo -e "\nDone"
-echo -e "-----"
+	echo -e "\nDone"
+	echo -e "-----"
+fi
 
 # Merge the samples into a single file
 echo -e "\nMerging replicates..."
-for sid in $(ls data/*.gz | awk -F"/" '{print $2}' | awk -F"-" '{print $1}' | sort -u)
+for sid in $(ls data/*.gz | awk -F"/" '{print $2}' | awk -F"-" '{print $1}' | sort -u) #Bonus 2 included in scripts/merge
 do
-    bash scripts/merge_fastqs.sh data out/merged $sid
+	 if [[ -d "$2"/"$3" ]];
+	 then
+                echo -e ""$sid" replicates have already been merged...continue"
+                echo -e "---------------------------------------------------"
+	else
+    		bash scripts/merge_fastqs.sh data out/merged $sid
+	 fi
 done
 echo -e "\nDone"
 echo -e "------"
 
 # Run cutadapt for all merged files
+#TODO: Lines for Bonus 2 - check if files exist
+
 echo -e "\nFinding and removing adapter sequences..."
 mkdir -p out/trimmed
 mkdir -p log/cutadapt
@@ -83,6 +97,8 @@ echo -e "\nDone"
 echo -e "-----"
 
 #Run STAR for all trimmed files
+#TODO: Lines for Bonus 2 - check if files exist
+
 echo -e "\nRunning STAR alignments..."
 for fname in out/trimmed/*.fastq.gz
 do
